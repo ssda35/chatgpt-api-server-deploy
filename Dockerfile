@@ -30,5 +30,14 @@ COPY docker-compose.yml /app/docker-compose.yml
 # Sao chép thư mục config vào container
 COPY config /app/config
 
+# Sao chép thư mục docker-entrypoint-initdb.d vào container
+COPY docker-entrypoint-initdb.d /app/docker-entrypoint-initdb.d
+
+# Sao chép thư mục docs vào container
+COPY docs /app/docs
+
+# Sao chép các tập tin khác nếu cần
+COPY . /app
+
 # Chạy deploy.sh khi container khởi động
 CMD ["/bin/bash", "/usr/local/bin/deploy.sh"]
