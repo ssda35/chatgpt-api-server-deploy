@@ -30,7 +30,7 @@ services:
     environment:
       TZ: Asia/Shanghai # 指定时区
       # 接入网关地址
-      CHATPROXY: "https://demo.xyhelper.cn"
+      CHATPROXY: "https://da.xyhelper-agent.com"
       # 接入网关的authkey
       AUTHKEY: "xyhelper"
     volumes:
