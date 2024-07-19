@@ -24,6 +24,9 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-c
 COPY deploy.sh /usr/local/bin/deploy.sh
 RUN chmod +x /usr/local/bin/deploy.sh
 
+# Sao chép thư mục config vào container
+COPY config /app/config
+
 # Sao chép các tập tin khác nếu cần
 COPY . /app
 
