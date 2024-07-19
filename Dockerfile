@@ -1,8 +1,7 @@
-# Sử dụng hình ảnh Docker chính thức hỗ trợ Docker-in-Docker
-FROM docker:latest
+FROM alpine:latest
 
-# Cài đặt bash
-RUN apk add --no-cache bash
+# Cài đặt Docker CLI và các công cụ cần thiết
+RUN apk add --no-cache docker-cli docker-compose bash
 
 # Sao chép script deploy.sh vào container
 COPY deploy.sh /usr/local/bin/deploy.sh
@@ -17,5 +16,8 @@ COPY config /app/config
 # Sao chép thư mục docker-entrypoint-initdb.d vào container
 COPY docker-entrypoint-initdb.d /app/docker-entrypoint-initdb.d
 
-# Chạy Docker daemon và deploy.sh khi container khởi động
-CMD ["sh", "-c", "dockerd-entrypoint.sh & sleep 5 && /usr/local/bin/deploy.sh"]
+# Thiết lập WORKDIR
+WORKDIR /app
+
+# Chạy deploy.sh khi container khởi động
+CMD ["/usr/local/bin/deploy.sh"]
