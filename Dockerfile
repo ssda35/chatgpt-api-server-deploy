@@ -24,11 +24,11 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-c
 COPY deploy.sh /usr/local/bin/deploy.sh
 RUN chmod +x /usr/local/bin/deploy.sh
 
+# Sao chép docker-compose.yml vào container
+COPY docker-compose.yml /app/docker-compose.yml
+
 # Sao chép thư mục config vào container
 COPY config /app/config
-
-# Sao chép các tập tin khác nếu cần
-COPY . /app
 
 # Chạy deploy.sh khi container khởi động
 CMD ["/bin/bash", "/usr/local/bin/deploy.sh"]
