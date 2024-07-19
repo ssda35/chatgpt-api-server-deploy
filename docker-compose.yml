@@ -5,41 +5,39 @@ services:
     command: --mysql-native-password=ON --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
     volumes:
-      - ./data/mysql/:/var/lib/mysql/
-      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+      - mysql_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     environment:
-      TZ: Asia/Shanghai # 指定时区
-      MYSQL_ROOT_PASSWORD: "123456" # 配置root用户密码
-      MYSQL_DATABASE: "cool" # 业务库名
-      MYSQL_USER: "cool" # 业务库用户名
-      MYSQL_PASSWORD: "123123" # 业务库密码
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "cool"
+      MYSQL_USER: "cool"
+      MYSQL_PASSWORD: "123123"
+
   redis:
     image: redis
-    # command: --requirepass "12345678" # redis库密码,不需要密码注释本行
     restart: always
     environment:
-      TZ: Asia/Shanghai # 指定时区
+      TZ: Asia/Shanghai
     volumes:
-      - ./data/redis/:/data/
+      - redis_data:/data
+
   chatgpt-api-server:
     image: xyhelper/chatgpt-api-server:latest
-    container_name: chatgpt-api-server
     restart: always
     ports:
       - 8100:8001
     environment:
-      TZ: Asia/Shanghai # 指定时区
-      # 接入网关地址
+      TZ: Asia/Shanghai
       CHATPROXY: "https://da.xyhelper-agent.com"
-      # 接入网关的authkey
       AUTHKEY: "xyhelper"
     volumes:
-      - ./data/chatgpt-api-server/:/app/data/
+      - chatgpt_api_data:/app/data
     labels:
       - "com.centurylinklabs.watchtower.scope=xyhelper-chatgpt-api-server"
+
   xyhelper-web:
     image: xyhelper/xyhelper-web
-    container_name: xyhelper-web
     restart: always
     ports:
       - 8101:8080
@@ -47,15 +45,7 @@ services:
       BASE_URI: "http://chatgpt-api-server:8001"
     labels:
       - "com.centurylinklabs.watchtower.scope=xyhelper-chatgpt-api-server"
-  # chat2api:
-  #   image: xyhelper/chat2api
-  #   ports:
-  #     - "8102:8080"
-  #   restart: always
-  #   volumes:
-  #     - ./config/chat2api.yaml:/app/config/config.yaml
-  #   labels:
-  #     - "com.centurylinklabs.watchtower.scope=xyhelper-chatgpt-api-server"
+
   watchtower:
     image: containrrr/watchtower
     volumes:
@@ -63,6 +53,11 @@ services:
     command: --scope xyhelper-chatgpt-api-server --cleanup
     restart: always
     environment:
-      - TZ=Asia/Shanghai
+      TZ: Asia/Shanghai
     labels:
       - "com.centurylinklabs.watchtower.scope=xyhelper-chatgpt-api-server"
+
+volumes:
+  mysql_data:
+  redis_data:
+  chatgpt_api_data:
